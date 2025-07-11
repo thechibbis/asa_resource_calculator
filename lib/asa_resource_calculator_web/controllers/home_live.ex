@@ -13,19 +13,30 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
         <div class="card border border-base-300 bg-base-100 ">
           <div class="card-body overflow-y-auto p-4">
             <div>
-              <.input type="text" name="search" placeholder="Search..." value="" class="border-none " />
+              <.form for={@form} phx-change="search_item">
+                <.input
+                  type="text"
+                  name="search"
+                  placeholder="Search..."
+                  field={@form[:search_item]}
+                  class="border-none "
+                />
+              </.form>
             </div>
+
             <ul class="list">
               <%= for item <- @items do %>
-                <li class="list-row flex justify-between items-center gap-4 p-0 py-4">
-                  <div>
-                    <.icon name="hero-building-office" />
-                    {item["name"]}
-                  </div>
-                  <button phx-click="add-item" class="btn btn-primary btn-ghost btn-sm btn-square">
-                    <.icon name="hero-plus" />
-                  </button>
-                </li>
+                <%= if String.downcase((item["name"])) |> String.contains?(@search_item) do %>
+                  <li class="list-row flex justify-between items-center gap-4 p-0 py-4">
+                    <div>
+                      <.icon name="hero-building-office" />
+                      {item["name"]}
+                    </div>
+                    <button phx-click="add-item" class="btn btn-primary btn-ghost btn-sm btn-square">
+                      <.icon name="hero-plus" />
+                    </button>
+                  </li>
+                <% end %>
               <% end %>
             </ul>
           </div>
@@ -40,6 +51,14 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
   def mount(_params, _session, socket) do
     items = AsaResourceCalculator.Cache.get_all_items()
 
-    {:ok, socket |> assign(:items, items)}
+    {:ok,
+     socket
+     |> assign(:items, items)
+     |> assign(:form, to_form(%{"search_item" => ""}))
+     |> assign(:search_item, "")}
+  end
+
+  def handle_event("search_item", %{"search" => item_name}, socket) do
+    {:noreply, socket |> assign(:search_item, String.downcase(item_name))}
   end
 end

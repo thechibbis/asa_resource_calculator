@@ -1,5 +1,10 @@
 # AsaResourceCalculator
 
+## TODO!
+- [x] search item
+- [ ] Do the search client side maybe
+- [ ] Add item handler
+
 To start your Phoenix server:
 
 * Run `mix setup` to install and setup dependencies
