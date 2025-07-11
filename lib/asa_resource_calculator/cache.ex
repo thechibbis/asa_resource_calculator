@@ -1,4 +1,8 @@
 defmodule AsaResourceCalculator.Cache do
+  @moduledoc """
+  Module responsible for caching the scrapped data into a ETS table.
+  """
+
   use GenServer
 
   @items_table :items_cache

@@ -1,11 +1,16 @@
 defmodule AsaResourceCalculator.Scrapper do
+  @moduledoc """
+  Module responsible for scrapping the ark.wiki.gg
+  iex> Crawly.Engine.start_spider(AsaResourceCalculator.Scrapper)
+  """
+
   use Crawly.Spider
 
   @impl Crawly.Spider
-  def base_url(), do: "https://ark.wiki.gg/"
+  def base_url, do: "https://ark.wiki.gg/"
 
   @impl Crawly.Spider
-  def init() do
+  def init do
     [
       start_urls: [
         "https://ark.wiki.gg/wiki/Structures",
@@ -54,6 +59,7 @@ defmodule AsaResourceCalculator.Scrapper do
     %Crawly.ParsedItem{:items => [item], :requests => next_requests}
   end
 
+  @spec parse_name(binary()) :: binary()
   defp parse_name(name) when is_binary(name) do
     case String.contains?(name, ["Primitive Plus", "Mobile"]) do
       true -> ""
@@ -61,6 +67,7 @@ defmodule AsaResourceCalculator.Scrapper do
     end
   end
 
+  @spec parse_resources(list()) :: list()
   defp parse_resources(res) do
     case Enum.empty?(res) do
       true -> nil
