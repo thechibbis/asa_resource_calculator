@@ -246,7 +246,10 @@ defmodule AsaResourceCalculatorWeb.CoreComponents do
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={["w-full input", @errors != [] && "input-error"]}
+          class={[
+            "w-full input border-1 border-base-300 focus:ring-0 focus:outline-none",
+            @errors != [] && "input-error"
+          ]}
           {@rest}
         />
       </label>
