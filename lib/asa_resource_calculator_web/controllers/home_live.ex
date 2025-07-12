@@ -9,11 +9,11 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
         <Layouts.theme_toggle />
       </div>
 
-      <div class="flex flex-1 flow-col min-h-0 gap-4 w-full">
-        <div class="card border border-base-300 bg-base-100 ">
+      <div class="flex flex-1 flow-col min-h-0 gap-2 w-full">
+        <div class="card border border-base-300 bg-base-100 min-w-90">
           <div class="card-body overflow-y-auto p-4">
             <div>
-              <.form for={@form} phx-change="search_item">
+              <.form for={@form} phx-change="search-item">
                 <.input
                   type="text"
                   name="search"
@@ -25,19 +25,23 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
             </div>
 
             <ul class="list">
-              <%= for item <- @items do %>
-                <%= if String.downcase((item["name"])) |> String.contains?(@search_item) do %>
-                  <li class="list-row flex justify-between items-center gap-4 p-0 py-4">
-                    <div>
-                      <.icon name="hero-building-office" />
-                      {item["name"]}
-                    </div>
-                    <button phx-click="add-item" class="btn btn-primary btn-ghost btn-sm btn-square">
-                      <.icon name="hero-plus" />
-                    </button>
-                  </li>
-                <% end %>
-              <% end %>
+              <li
+                :for={item <- @items}
+                :if={String.downcase(item["name"]) |> String.contains?(@search_item)}
+                class="list-row flex justify-between items-center gap-4 p-0 py-4"
+              >
+                <div>
+                  <.icon name="hero-building-office" />
+                  {item["name"]}
+                </div>
+                <button
+                  phx-click="add-item"
+                  value={item["name"]}
+                  class="btn btn-primary btn-ghost btn-sm btn-square"
+                >
+                  <.icon name="hero-plus" />
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -55,10 +59,17 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
      socket
      |> assign(:items, items)
      |> assign(:form, to_form(%{"search_item" => ""}))
-     |> assign(:search_item, "")}
+     |> assign(:search_item, "")
+     |> stream(:added_items, [])}
   end
 
-  def handle_event("search_item", %{"search" => item_name}, socket) do
+  def handle_event("search-item", %{"search" => item_name}, socket) do
     {:noreply, socket |> assign(:search_item, String.downcase(item_name))}
+  end
+
+  def handle_event("add-item", %{"value" => item_name}, socket) do
+    item = Enum.find(socket.assigns.items, fn item -> item["name"] == item_name end)
+
+    {:noreply, socket |> stream_insert(:added_items, item)}
   end
 end

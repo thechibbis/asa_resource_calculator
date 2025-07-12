@@ -26,12 +26,20 @@ defmodule AsaResourceCalculator.Scrapper do
     item_card = Floki.find(document, ".info-framework")
 
     item = %{
+      id: UUID.uuid4(),
       name: item_card |> Floki.find("div .info-masthead") |> Floki.text(),
       resources:
         item_card
         |> Floki.find("div[style*='padding-left:5px'] b")
         |> Enum.map(fn x ->
           %{
+            icon_url:
+              Floki.find(x, "a:has(img)")
+              |> Floki.attribute("src")
+              |> Floki.text()
+              |> Enum.map(fn url ->
+                Crawly.Utils.build_absolute_url(url, response.request.url)
+              end),
             name:
               Floki.find(x, "a:has(img)")
               |> Floki.attribute("title")
