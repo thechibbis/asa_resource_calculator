@@ -26,7 +26,12 @@ defmodule AsaResourceCalculator.Scrapper do
     item_card = Floki.find(document, ".info-framework")
 
     item = %{
-      id: UUID.uuid4(),
+      icon_url:
+        "https://ark.wiki.gg" <>
+          (item_card
+           |> Floki.find("div .info-column a img")
+           |> Floki.attribute("src")
+           |> Floki.text()),
       name: item_card |> Floki.find("div .info-masthead") |> Floki.text(),
       resources:
         item_card
@@ -44,9 +49,10 @@ defmodule AsaResourceCalculator.Scrapper do
               |> String.split(" × ")
               |> List.first(),
             icon_url:
-              Floki.find(x, "a:has(img) img")
-              |> Floki.attribute("src")
-              |> Floki.text()
+              "https://ark.wiki.gg" <>
+                (Floki.find(x, "a:has(img) img")
+                 |> Floki.attribute("src")
+                 |> Floki.text())
           }
         end)
         |> parse_resources()

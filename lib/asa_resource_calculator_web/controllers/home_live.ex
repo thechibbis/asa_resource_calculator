@@ -30,9 +30,9 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
                 :if={String.downcase(item["name"]) |> String.contains?(@search_item)}
                 class="list-row flex justify-between items-center gap-4 p-0 py-4"
               >
-                <div>
-                  <.icon name="hero-building-office" />
-                  {item["name"]}
+                <div class="flex flex-row gap-2 items-center">
+                  <img src={item["icon_url"]} alt={item["name"]} width="32" height="32" />
+                  {item["name"]}:
                 </div>
                 <button
                   phx-click="add-item"
@@ -46,7 +46,30 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
           </div>
         </div>
 
-        <div class="card border border-base-300 bg-base-100 w-full"></div>
+        <div class="card border border-base-300 bg-base-100 w-full overflow-y-auto">
+          <button phx-click="reset-added-items" class="btn btn-error">reset</button>
+          <ul class="list">
+            <li
+              :for={item <- @added_items}
+              class="list-row flex justify-between items-center gap-4 p-4 py-4"
+            >
+              <div class="flex flex-row gap-4 items-center">
+                <div class="flex flex-row gap-2 items-center">
+                  <img src={item["icon_url"]} alt={item["name"]} width="32" height="32" />
+                  {item["name"]}:
+                </div>
+
+                <div class="flex flex-row gap-4 text-center">
+                  <p :for={resource <- item["resources"]}>
+                    <img src={resource["icon_url"]} alt={resource["name"]} /> {resource[
+                      "quantity"
+                    ]}
+                  </p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </main>
     """
@@ -60,7 +83,7 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
      |> assign(:items, items)
      |> assign(:form, to_form(%{"search_item" => ""}))
      |> assign(:search_item, "")
-     |> stream(:added_items, [])}
+     |> assign(:added_items, [])}
   end
 
   def handle_event("search-item", %{"search" => item_name}, socket) do
@@ -70,6 +93,10 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
   def handle_event("add-item", %{"value" => item_name}, socket) do
     item = Enum.find(socket.assigns.items, fn item -> item["name"] == item_name end)
 
-    {:noreply, socket |> stream_insert(:added_items, item)}
+    {:noreply, socket |> assign(:added_items, [item | socket.assigns.added_items])}
+  end
+
+  def handle_async("reset-added-items", _params, socket) do
+    {:noreply, socket |> assign(:added_items, [])}
   end
 end

@@ -3,7 +3,9 @@
 ## TODO!
 - [x] search item
 - [ ] Do the search client side maybe
-- [ ] Add item handler
+- [x] Add item handler
+- [ ] Quantity handler
+- [ ] Reorganize the code (transform some thing into a component)
 
 To start your Phoenix server:
 

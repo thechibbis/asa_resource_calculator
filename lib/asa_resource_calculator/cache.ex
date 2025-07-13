@@ -6,7 +6,7 @@ defmodule AsaResourceCalculator.Cache do
   use GenServer
 
   @items_table :items_cache
-  @data_filename "AsaResourceCalculator.Scrapper_18e01ae0-5f83-11f0-8172-1c697aef88a4.jsonl"
+  @data_filename "AsaResourceCalculator.Scrapper_cef0ef20-5f89-11f0-b446-1c697aef88a4.jsonl"
 
   def start_link(_opts) do
     GenServer.start(__MODULE__, [], name: __MODULE__)
