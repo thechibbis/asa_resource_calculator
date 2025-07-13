@@ -62,7 +62,8 @@ config :crawly,
     {Crawly.Pipelines.Validate, fields: [:resources, :name]},
     {Crawly.Pipelines.DuplicatesFilter, item_id: :name},
     Crawly.Pipelines.JSONEncoder,
-    {Crawly.Pipelines.WriteToFile, extension: "jl", folder: "priv/data", include_timestamp: false}
+    {Crawly.Pipelines.WriteToFile,
+     extension: "jsonl", folder: "priv/data", include_timestamp: false}
   ]
 
 # Import environment specific config. This must remain at the bottom

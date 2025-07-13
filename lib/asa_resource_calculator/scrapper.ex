@@ -33,13 +33,6 @@ defmodule AsaResourceCalculator.Scrapper do
         |> Floki.find("div[style*='padding-left:5px'] b")
         |> Enum.map(fn x ->
           %{
-            icon_url:
-              Floki.find(x, "a:has(img)")
-              |> Floki.attribute("src")
-              |> Floki.text()
-              |> Enum.map(fn url ->
-                Crawly.Utils.build_absolute_url(url, response.request.url)
-              end),
             name:
               Floki.find(x, "a:has(img)")
               |> Floki.attribute("title")
@@ -49,7 +42,11 @@ defmodule AsaResourceCalculator.Scrapper do
               elem(x, 2)
               |> Floki.text()
               |> String.split(" × ")
-              |> List.first()
+              |> List.first(),
+            icon_url:
+              Floki.find(x, "a:has(img) img")
+              |> Floki.attribute("src")
+              |> Floki.text()
           }
         end)
         |> parse_resources()
