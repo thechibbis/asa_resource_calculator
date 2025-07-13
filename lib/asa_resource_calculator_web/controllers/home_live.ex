@@ -96,7 +96,7 @@ defmodule AsaResourceCalculatorWeb.HomeLive do
     {:noreply, socket |> assign(:added_items, [item | socket.assigns.added_items])}
   end
 
-  def handle_async("reset-added-items", _params, socket) do
+  def handle_event("reset-added-items", _params, socket) do
     {:noreply, socket |> assign(:added_items, [])}
   end
 end
